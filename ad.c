@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-FILE *ad_file = NULL;
+const char ad_file[] = "ad.lst";
 
 const int scrollcount = 2;
 
@@ -29,15 +29,17 @@ int gotoxy(HANDLE hConsole, int x, int y)
 
 char *get_new_ad()
 {
+    FILE *ad_ptr = NULL;
+
     const size_t allocsz = 256;
     char *buf = calloc(allocsz, sizeof(char));
-    if (ad_file == NULL)
+    if (ad_ptr == NULL)
     {
-        ad_file = fopen("ad.lst", "rb");
-        if (!ad_file)
+        ad_ptr = fopen(ad_file, "rb");
+        if (!ad_ptr)
             return NULL;
     }
-    if (fgets(buf, allocsz, ad_file))
+    if (fgets(buf, allocsz, ad_ptr))
     {
         if (buf[0] != '\0')
         {
@@ -53,7 +55,7 @@ char *get_new_ad()
     }
     else
     {
-        fseek(ad_file, 0, SEEK_SET);
+        fseek(ad_ptr, 0, SEEK_SET);
         free(buf);
         get_new_ad();
     }
@@ -122,12 +124,14 @@ int show_banner(CONSOLE_SCREEN_BUFFER_INFO csbi)
 
     int display_y = cursor.Y - scrollcount - windowsize.Y;
     if (cursor.Y < windowsize.Y - scrollcount)
-    {
         display_y = 0;
-    }
     gotoxy(console, 0, display_y);
-    SetColor((colortable[color_count++ % 8]));
+
+    if (pay_tier != PREMIUM)
+        SetColor((colortable[color_count++ % 8]));
+
     get_new_ad();
+
     SetColor(old_color);
     return display_y;
 }
@@ -150,13 +154,15 @@ int show_ads()
     COORD oldpos = csbi.dwCursorPosition;
     show_banner(csbi);
     oldpos.Y += scrollcount;
-
     int latest_banner_y = 0;
     while (1)
     {
         gotoxy(hConsole, oldpos.X, oldpos.Y);
+        if (pay_tier == FREE)
+            Sleep(500);
+        else
+            Sleep(1000);
 
-        Sleep(1000);
         GetConsoleScreenBufferInfo(hConsole, &csbi);
 
         oldpos = csbi.dwCursorPosition;
