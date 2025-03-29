@@ -29,7 +29,7 @@ int gotoxy(HANDLE hConsole, int x, int y)
 
 char *get_new_ad()
 {
-    FILE *ad_ptr = NULL;
+    static FILE *ad_ptr = NULL;
 
     const size_t allocsz = 256;
     char *buf = calloc(allocsz, sizeof(char));
