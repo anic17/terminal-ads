@@ -2,9 +2,9 @@
 The worst idea ever: banner ads in your terminal  
 
 ## About  
-Ever felt like your terminal was too clean? No popups, no flashing banners, no annoying interruptions like the Web in 2025? **Time to fix that.**  
+Ever felt like your terminal was too clean? No popups, no flashing banners, no annoying interruptions like the current state of the Web in 2025? Time to fix that.  
 
-**terminal-ads** is a proof-of-concept that brings the horrors of modern advertising to the only place that was still safe and ad-free: **your terminal.** This Windows program ensures that persistent, intrusive, useless and distracting banners are always displayed at the top of your terminal window. Fortunately, there is no Linux version yet so you're safe over there (for now).
+**terminal-ads** is (hopefully) a proof-of-concept that brings the horrors of modern advertising to the only place that was still safe and ad-free: **your terminal.** This Windows program ensures that persistent, intrusive, useless and distracting banners are always displayed at the top of your terminal window. Fortunately, there is no Linux version yet so you're safe over there (for now).
 
 Because why should terminals be an exception to the rest of the modern world?  
 
@@ -15,7 +15,7 @@ Because why should terminals be an exception to the rest of the modern world?
 - 🤡 **Completely Unnecessary**: It's not a big surprise.  
 
 ## Why?  
-Because every space should be monetized. And also, because nobody asked for this.  
+Because every space should be monetized. Every blank space is an opportunity for advertising. And also, because nobody asked for this.  
 
 ## Usage
 
@@ -29,11 +29,11 @@ The different numbers indicate the level of intrusiveness:
 - **Premium tier (3)**
   - Inserts an intrusive ad once, no persistence, no flashing colors.
 - **Premium+ tier (4)**
-  - Recommended option: doesn't insert junk into your terminal, and does absolutely nothing.
+  - Recommended option: doesn't insert useless junk into your terminal, and does absolutely nothing.
 
 ## Installation
 
-You really shouldn't use this anywhere. But if you really want to, here are the steps.
+You really shouldn't use this anywhere. But if you really want to, here are the steps:
 
 1. Clone this abomination:  
    ```sh
