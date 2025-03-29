@@ -44,4 +44,10 @@ You really shouldn't use this anywhere. But if you really want to, here are the 
 
 3. Run it. And regret it.
 
+# Screenshots
+###### terminal-ads running with Free tier, how intrusive is this?
+![image](https://github.com/user-attachments/assets/82bc28ae-14d2-490f-9648-1c0fd498efe8)
+
+
+
 **Copyright &copy; 2025 anic17 Software**
