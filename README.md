@@ -1,5 +1,5 @@
 # terminal-ads  
-The worst idea ever: banner ads in your terminal  
+One of the worst ideas ever: intrusive banner ads in your terminal.
 
 ## About  
 Ever felt like your terminal was too clean? No popups, no flashing banners, no annoying interruptions like the current state of the Web in 2025? Time to fix that.  
@@ -11,7 +11,7 @@ Because why should terminals be an exception to the rest of the modern world?
 ## Features  
 - 📌 **Persistent Banner Ads**: Always at the top, whether you scroll or clear the screen.  
 - 🚫 **Unskippable**: The ads stay there for the entire terminal. Forever.
-- ⚙️ **Customizable Ad Intrusiveness**: Ability to choose how much suffering you want
+- ⚙️ **Customizable Ad Intrusiveness**: Ability to choose how much suffering you want.
 - 🤡 **Completely Unnecessary**: It's not a big surprise.  
 
 ## Why?  
@@ -29,7 +29,14 @@ The different numbers indicate the level of intrusiveness:
 - **Premium tier (3)**
   - Inserts an intrusive ad once, no persistence, no flashing colors.
 - **Premium+ tier (4)**
-  - Recommended option: doesn't insert useless junk into your terminal, and does absolutely nothing.
+  - _Recommended option:_ doesn't insert useless junk into your terminal, and does absolutely nothing.
+
+The file `ad.lst` contains all the messages that will get displayed inside the banner. At the moment only single line advertisements are supported, with a single advertisement per line such as:
+```
+First ad! Don't use this program
+Second ad! You really should not use this program
+Try out Newtrodit, the best console text editor ever made!
+```
 
 ## Installation
 
