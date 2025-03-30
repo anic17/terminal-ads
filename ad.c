@@ -27,8 +27,52 @@ int gotoxy(HANDLE hConsole, int x, int y)
     SetConsoleCursorPosition(hConsole, position);
 }
 
-char *get_new_ad()
+int TokLastPos(char *s, const char *token)
 {
+
+	int lastpos = -1;
+	if (!s || !token)
+		return lastpos;
+	
+	for (int i = 0; i < strlen(s); i++)
+	{
+		for (int j = 0; j < strlen(token); j++)
+		{
+			if (s[i] == token[j])
+				lastpos = i;
+		}
+	}
+	return lastpos;
+}
+
+char *get_path_directory(char *path, char *dest) // Not a WinAPI function
+{
+    memcpy(dest, path, strlen(path));
+    const char PATHTOKENS[] = "\\/";
+    int tmp_int = TokLastPos(path, PATHTOKENS);
+
+    if (tmp_int != -1)
+    {
+
+        for (int i = 0; i < strlen(PATHTOKENS); i++)
+        {
+            if (dest[strlen(dest) - 1] != PATHTOKENS[i])
+                dest[strlen(dest)] = PATHTOKENS[i];
+        }
+
+        memset(dest + tmp_int + 1, 0, MAX_PATH - tmp_int);
+
+        return dest;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
+char *get_new_ad(int window_width)
+{
+
     static FILE *ad_ptr = NULL;
 
     const size_t allocsz = 256;
@@ -57,7 +101,7 @@ char *get_new_ad()
     {
         fseek(ad_ptr, 0, SEEK_SET);
         free(buf);
-        get_new_ad();
+        get_new_ad(window_width);
     }
     return NULL;
 }
@@ -130,8 +174,7 @@ int show_banner(CONSOLE_SCREEN_BUFFER_INFO csbi)
     if (pay_tier != PREMIUM)
         SetColor((colortable[color_count++ % 8]));
 
-    get_new_ad();
-
+    get_new_ad(windowsize.Y);
     SetColor(old_color);
     return display_y;
 }
@@ -195,8 +238,14 @@ int main(int argc, char *argv[])
     if (argc > 1)
         ad_tier_arg = atoi(argv[1]);
     SetConsoleCtrlHandler(NULL, TRUE);
+    char *exec_name = calloc((MAX_PATH + 1) * 2, sizeof(TCHAR));
+    GetModuleFileName(NULL, exec_name, MAX_PATH * 2);
     if (argc > 1 && strcmp(argv[1], argn) == 0)
     {
+        char* new_dir = calloc(MAX_PATH*2, sizeof(char));
+        get_path_directory(exec_name, new_dir);
+        SetCurrentDirectory(new_dir);
+
         if (argc > 2)
             ad_tier_arg = atoi(argv[2]);
         if (ad_tier_arg >= 1 && ad_tier_arg <= 4)
@@ -213,10 +262,10 @@ int main(int argc, char *argv[])
     {
         if (argc > 2)
             ad_tier_arg = atoi(argv[2]);
-        char *exec_name = calloc((MAX_PATH + 1) * 2, sizeof(TCHAR));
-        GetModuleFileName(NULL, exec_name, MAX_PATH * 2);
+
         // If the program is started with "--silent" switch, pass it to the new process
         sprintf(command_line, "%s %s %d", exec_name, argn, ad_tier_arg);
+
         if (CreateProcess(NULL,
                           command_line,
                           NULL,
