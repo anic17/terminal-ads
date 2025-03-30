@@ -21,7 +21,7 @@ int pay_tier = FREE;
 int colortable[] = {0x6, 0x2, 0x3, 0xe, 0xd, 0x9, 0xb, 0xa};
 int color_count = 0;
 
-int gotoxy(HANDLE hConsole, int x, int y)
+void gotoxy(HANDLE hConsole, int x, int y)
 {
     COORD position = {x, y};
     SetConsoleCursorPosition(hConsole, position);
@@ -34,9 +34,9 @@ int TokLastPos(char *s, const char *token)
     if (!s || !token)
         return lastpos;
 
-    for (int i = 0; i < strlen(s); i++)
+    for (size_t i = 0; i < strlen(s); i++)
     {
-        for (int j = 0; j < strlen(token); j++)
+        for (size_t j = 0; j < strlen(token); j++)
         {
             if (s[i] == token[j])
                 lastpos = i;
@@ -54,7 +54,7 @@ char *get_path_directory(char *path, char *dest) // Not a WinAPI function
     if (tmp_int != -1)
     {
 
-        for (int i = 0; i < strlen(PATHTOKENS); i++)
+        for (size_t i = 0; i < strlen(PATHTOKENS); i++)
         {
             if (dest[strlen(dest) - 1] != PATHTOKENS[i])
                 dest[strlen(dest)] = PATHTOKENS[i];
@@ -70,7 +70,7 @@ char *get_path_directory(char *path, char *dest) // Not a WinAPI function
     }
 }
 
-char *get_new_ad(int window_width)
+void get_new_ad(int window_width)
 {
 
     static FILE *ad_ptr = NULL;
@@ -85,16 +85,25 @@ char *get_new_ad(int window_width)
     }
     if (fgets(buf, allocsz, ad_ptr))
     {
+        buf[strcspn(buf, "\r\n")] = '\0';
         if (buf[0] != '\0')
         {
-            char *equalbuf = calloc(allocsz, sizeof(char));
-            memset(equalbuf, '=', strlen(buf) - 1);
-            printf("%s%s\n", buf, equalbuf);
             if (pay_tier < BASIC)
                 SetConsoleTitle(buf);
 
+            char *equalbuf = calloc(allocsz + window_width, sizeof(char));
+            if(strlen(buf) > window_width-3) // If the ad is too long, truncate it
+            {
+                buf[window_width-4] = '.';
+                buf[window_width-3] = '.';
+                buf[window_width-2] = '.';
+                buf[window_width-1] = '\0';
+            }
+            memset(equalbuf, '=', strlen(buf) + 1); 
+            printf("%s\n%s\n", buf, equalbuf);
+            
+
             free(equalbuf);
-            return buf;
         }
     }
     else
@@ -103,25 +112,6 @@ char *get_new_ad(int window_width)
         free(buf);
         get_new_ad(window_width);
     }
-    return NULL;
-}
-
-void SetWindow(int Width, int Height)
-{
-    COORD coord;
-    coord.X = Width;
-    coord.Y = Height;
-
-    SMALL_RECT Rect;
-    Rect.Top = 0;
-    Rect.Left = 0;
-    Rect.Bottom = Height - 1;
-    Rect.Right = Width - 1;
-
-    HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleWindowInfo(Handle, TRUE, &Rect);
-
-    SetConsoleScreenBufferSize(Handle, coord);
 }
 
 void SetColor(WORD color)
@@ -174,8 +164,9 @@ int show_banner(CONSOLE_SCREEN_BUFFER_INFO csbi)
     if (pay_tier != PREMIUM)
         SetColor((colortable[color_count++ % 8]));
 
-    get_new_ad(windowsize.Y);
+    get_new_ad(windowsize.X);
     SetColor(old_color);
+    free(buffer);
     return display_y;
 }
 
@@ -189,10 +180,7 @@ int show_ads()
     SetConsoleMode(hInput, dwMode & (~ENABLE_PROCESSED_INPUT));
 
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    SMALL_RECT lpScrollRectangle;
-    CHAR_INFO chiFill;
-    chiFill.Char.AsciiChar = ' ';
-    chiFill.Attributes = 0;
+
     GetConsoleScreenBufferInfo(hConsole, &csbi);
     COORD oldpos = csbi.dwCursorPosition;
     show_banner(csbi);
