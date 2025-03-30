@@ -38,6 +38,8 @@ Second ad! You really should not use this program
 Try out Newtrodit, the best console text editor ever made!
 ```
 
+Additionally, if you're feeling **extra** silly, you can run `ads --autorun` and let the magic begin. What does this do? Once you open a new CMD instance and see an obnoxious ad at the top you'll wonder how that happened. You are warned.
+
 ## Installation
 
 You really shouldn't use this anywhere. But if you really want to, here are the steps:
